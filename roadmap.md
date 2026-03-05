@@ -29,10 +29,10 @@ terraform validate
 ## Start here :point_down:
 
 ```bash
-mkdir -p workstation/terraform/logs
+mkdir -p workstation/lab1 logs
 ```
 ```bash
-cd workstation/terraform
+cd workstation/lab1
 ```
 ```bash
 touch main.tf providers.tf variables.tf
@@ -44,5 +44,5 @@ export AWS_ACCESS_KEY_ID=<?>
 export AWS_SECRET_ACCESS_KEY=<?>
 export AWS_DEFAULT_REGION=ca-central-1
 export TF_LOG=DEBUG
-export TF_LOG_PATH="$(git rev-parse --show-toplevel)/workstation/terraform/.terraform/logs/run_$(date +%Y%m%d_%H%M%S).log"
+export TF_LOG_PATH="$(git rev-parse --show-toplevel)/logs/run_$(date +%Y%m%d_%H%M%S).log"
 ```
