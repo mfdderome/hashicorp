@@ -46,3 +46,85 @@ export AWS_DEFAULT_REGION=ca-central-1
 export TF_LOG=DEBUG
 export TF_LOG_PATH="$(git rev-parse --show-toplevel)/logs/run_$(date +%Y%m%d_%H%M%S).log"
 ```
+
+```bash
+tf init
+tf validate
+tf plan
+```
+
+```bash
+tf apply
+```
+
+```bash
+tf state list
+```
+
+```bash
+tf plan -destroy
+```
+
+```bash
+tf destroy
+```
+
+```bash
+tf plan -out my_plan
+tf show my_plan
+tf apply my_plan
+```
+
+:point_right: [Variables precedence](terraform/Hands-On%20Labs/Section%2004%20-%20Understand%20Terraform%20Basics/06%20-%20Intro_to_the_Input_Variables_Block.md)
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
+
+```bash
+
+```
