@@ -49,4 +49,11 @@ variable "variables_sub_az" {
 variable "variables_sub_auto_ip" {
   description = "Set Automatic IP Assignment for Variables Subnet"
   type        = bool
+  default     = true
+}
+
+variable "environment" {
+  description = "Environment for deployment"
+  type        = string
+  default     = "dev"
 }
