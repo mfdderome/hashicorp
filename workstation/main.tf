@@ -9,23 +9,6 @@ locals {
   server_name = "ec2-${var.environment}-api-${var.variables_sub_az.0}"
 }
 
-# Terraform Data Block - Lookup Ubuntu 20.04
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"]
-}
-
 #Define the VPC 
 resource "aws_vpc" "vpc" {
   cidr_block = var.vpc_cidr
@@ -34,6 +17,7 @@ resource "aws_vpc" "vpc" {
     Name        = var.vpc_name
     Environment = "demo_environment"
     Terraform   = "true"
+    Region      = data.aws_region.current.region
   }
 }
 
@@ -133,6 +117,23 @@ resource "aws_nat_gateway" "nat_gateway" {
   tags = {
     Name = "demo_nat_gateway"
   }
+}
+
+# Terraform Data Block - Lookup Ubuntu 20.04
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"]
 }
 
 # Terraform Resource Block - To Build EC2 instance in Public Subnet

@@ -1,5 +1,24 @@
 # Terraform lab roadmap
 
+## :point_right: Install AWS CLI on Fedora 43 (WSL) :point_left:
+
+1. __Using dnf package manager__
+    ```bash
+    sudo dnf install awscli -y
+    ```
+2. __Or if you prefer the latest version via pip:__
+    ```bash
+    pip install --upgrade awscliv2
+    ```
+
+```bash
+aws configure
+```
+
+```bash
+aws ec2 describe-images --owners 099720109477 --filters "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*" --region ca-central-1
+```
+
 ## :point_right: Install Terraform on Fedora 43 (WSL) :point_left:
 
 ```bash
@@ -78,8 +97,12 @@ tf apply my_plan
 :point_right: [Variables precedence](terraform/Hands-On%20Labs/Section%2004%20-%20Understand%20Terraform%20Basics/06%20-%20Intro_to_the_Input_Variables_Block.md)
 
 ```bash
-
+terraform console
 ```
+* __console__
+  ```bash
+  data.aws_ami.ubuntu
+  ```
 
 ```bash
 

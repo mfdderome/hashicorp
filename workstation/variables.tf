@@ -3,11 +3,6 @@ variable "aws_region" {
   default = "ca-central-1"
 }
 
-variable "availability_zones" {
-  type    = list(string)
-  default = ["ca-central-1a", "ca-central-1b", "ca-central-1d"]
-}
-
 variable "vpc_name" {
   type    = string
   default = "demo_vpc"
