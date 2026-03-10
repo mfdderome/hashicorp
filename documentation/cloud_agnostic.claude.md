@@ -487,3 +487,106 @@ For your hybrid k3s architecture:
 - **Maximum privacy + full control** → Hetzner or Infomaniak directly
 - **You want managed k3s with less ops work** → look at **Civo** (UK-based, k3s-native, GDPR) or **Exoscale** (Swiss, EU-native)
 - **Elest.io's sweet spot** → if you want to self-host supporting services (Gitea for your GitOps repos, Grafana for monitoring, etc.) alongside your k3s cluster without managing those yourself
+
+# Me
+
+Instead of the proxmox on prem, why not installing RHEL bare-metal and use k3s for containers and KVM for real VMs such as pfsense?
+
+# Claude
+
+That's a solid architecture actually. Let me give you an honest comparison.
+
+---
+
+## What you're proposing
+
+```
+Bare-metal RHEL
+├── k3s          → containerized workloads
+└── KVM/libvirt  → full VMs (pfSense, Windows, legacy apps)
+```
+
+This is essentially what **Proxmox does under the hood** — Proxmox is Debian + QEMU/KVM + LXC with a management layer on top. You'd be replicating that stack on RHEL but with k3s instead of LXC.
+
+---
+
+## Honest comparison
+
+| | Proxmox | RHEL + k3s + KVM |
+|---|---|---|
+| VM management UI | ✅ Built-in | ❌ Need Cockpit or Virt-Manager |
+| Container orchestration | Basic (LXC) | ✅ Full k3s/Kubernetes |
+| Hybrid cloud fit | Awkward | ✅ Natural (same k3s everywhere) |
+| Snapshot/backup | ✅ Built-in PBS | Manual (need to build this) |
+| Live migration | ✅ Built-in | Manual libvirt setup |
+| Cost | Free (no subscription) | RHEL subscription ~$350/yr |
+| Ops overhead | Low | High |
+| Cluster management | ✅ Built-in | Need Metal³ or similar |
+| pfSense on KVM | ✅ Works great | ✅ Works great |
+
+---
+
+## The real advantages of your approach
+
+### 1. Unified container layer on-prem and cloud
+This is the biggest win. With Proxmox your on-prem containers run LXC, but on AWS/Hetzner they run Kubernetes — **completely different paradigms**. With k3s on bare-metal RHEL, your on-prem and cloud containers run on the **exact same stack**. ArgoCD, Helm charts, everything is portable.
+
+### 2. RHEL is production-grade
+RHEL gives you SELinux enforcing mode, FIPS compliance, enterprise kernel backports, and a proper support contract if you need it. Proxmox is Debian-based which is fine but not enterprise-hardened out of the box.
+
+### 3. KVM on RHEL is best-in-class
+RHEL is literally Red Hat's primary KVM platform — it's the most battle-tested KVM implementation available. pfSense, OPNsense, Windows VMs will all run excellently.
+
+---
+
+## The challenges to plan for
+
+### Backup strategy
+Proxmox Backup Server is genuinely excellent and you'd be giving it up. You'll need to handle:
+- k3s workload backups → **Velero** (backs up to S3)
+- KVM VM backups → **Veeam Community Edition** or scripted `virsh snapshot` + rsync
+
+### Networking complexity
+pfSense as a KVM VM managing your network stack while k3s also needs CNI networking requires careful planning:
+
+```
+RHEL host
+├── br0 (bridge) ──── pfSense VM (WAN/LAN)
+├── k3s (Flannel/Cilium CNI)
+│     └── pod network (10.42.0.0/16)
+└── libvirt NAT or bridge for other VMs
+```
+
+Cilium as your k3s CNI plays best with KVM co-existence — avoid Flannel if you're running complex routing via pfSense.
+
+### No clustering built-in
+Proxmox has built-in cluster support for multi-node setups. On bare RHEL you'd need to handle HA yourself:
+- k3s HA → built-in with embedded etcd, straightforward
+- KVM HA → needs **Pacemaker + Corosync** or manual failover
+
+---
+
+## What I'd actually recommend
+
+If you go this route, consider **AlmaLinux or Rocky Linux** instead of RHEL:
+
+- 100% RHEL binary compatible
+- No subscription cost
+- Same SELinux, same KVM, same ecosystem
+- Backed by CIQ (Rocky) and CloudLinux (Alma) — both serious companies
+
+```
+Rocky Linux 9 (bare metal)
+├── k3s + Cilium     → your containers (on-prem + hybrid with Hetzner)
+├── KVM + libvirt    → pfSense, any legacy VMs
+├── Velero           → k3s backup to S3/Hetzner Object Storage
+└── Cockpit          → lightweight web UI for VM management
+```
+
+This gives you the best of all worlds — enterprise-grade OS, zero licensing cost, unified container layer with your cloud k3s nodes, and proper VM support for pfSense without paying the Proxmox-is-Debian tax.
+
+---
+
+## Bottom line
+
+Your instinct is architecturally sound. The main thing you'd be trading is **Proxmox's convenience** (great UI, built-in clustering, PBS) for **architectural coherence** (same k3s stack everywhere, better cloud portability, enterprise OS). If you're comfortable with the ops overhead, the RHEL/Rocky + k3s + KVM approach is arguably the more professional long-term foundation.

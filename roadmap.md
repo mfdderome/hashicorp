@@ -97,7 +97,7 @@ tf apply my_plan
 :point_right: [Variables precedence](terraform/Hands-On%20Labs/Section%2004%20-%20Understand%20Terraform%20Basics/06%20-%20Intro_to_the_Input_Variables_Block.md)
 
 ```bash
-terraform console
+tf console
 ```
 * __console__
   ```bash
@@ -105,7 +105,7 @@ terraform console
   ```
 
 ```bash
-
+tf output -json
 ```
 
 ```bash
