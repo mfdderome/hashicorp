@@ -19,6 +19,16 @@ aws configure
 aws ec2 describe-images --owners 099720109477 --filters "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*" --region ca-central-1
 ```
 
+## :point_right: Install Azure CLI on Fedora 43 (WSL) :point_left:
+
+```bash
+sudo dnf install azure-cli
+```
+```bash
+az version
+az login
+```
+
 ## :point_right: Install Terraform on Fedora 43 (WSL) :point_left:
 
 ```bash
